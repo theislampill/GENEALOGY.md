@@ -29,6 +29,6 @@ self-citation:
 
 This file publishes feature-scoped citation guidance for possible descendants. It may also record affirmative, non-exhaustive lineage statements about antecedents.
 
-Replace every placeholder in the YAML front matter. Keep the opening delimiter on line 1 and leave one blank line immediately after the closing delimiter. See the [draft specification](../docs/specification.md) for field meanings, relationship definitions, identifier stability, legal cautions, and SPDX mappings.
+Replace every placeholder in the YAML front matter. Keep the opening delimiter on line 1 and leave one blank line immediately after the closing delimiter. See the [draft specification](https://github.com/theislampill/GENEALOGY.md/blob/main/docs/specification.md) for field meanings, relationship definitions, identifier stability, legal cautions, and SPDX mappings.
 
 An omitted lineage entry carries no negative meaning. It does not claim independent invention, deny a relationship, or state that a search for antecedents was performed.
