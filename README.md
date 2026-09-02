@@ -53,18 +53,20 @@ self-citation:
 
 ## Self-service validation
 
-These commands install [PyYAML](https://pyyaml.org/) and [`jsonschema`](https://python-jsonschema.readthedocs.io/) into the active Python environment, extract the first qualifying YAML front-matter block, validate it against the local schema, and print `GENEALOGY.md: valid` on success.
+These commands install [PyYAML](https://pyyaml.org/) and [`jsonschema`](https://python-jsonschema.readthedocs.io/) into the active Python environment, extract the first qualifying YAML front-matter block, validate it against the local schema, reject duplicate local subject IDs, and print `GENEALOGY.md: valid` on success.
 
 ### Bash
 
 ```bash
-python -m pip install --quiet PyYAML jsonschema && python -c 'import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path("GENEALOGY.md"); l=p.read_text(encoding="utf-8").splitlines(); assert l and l[0]=="---", "first line must be ---"; i=next(i for i in range(1,len(l)-1) if l[i]=="---" and l[i+1]==""); d=yaml.safe_load("\n".join(l[1:i])); s=json.loads(pathlib.Path("schema/genealogy.schema.json").read_text(encoding="utf-8")); Draft202012Validator.check_schema(s); Draft202012Validator(s,format_checker=FormatChecker()).validate(d); print("GENEALOGY.md: valid")'
+python -m pip install --quiet PyYAML jsonschema && python -c 'import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path("GENEALOGY.md"); l=p.read_text(encoding="utf-8").splitlines(); assert l and l[0]=="---", "first line must be ---"; i=next(i for i in range(1,len(l)-1) if l[i]=="---" and l[i+1]==""); d=yaml.safe_load("\n".join(l[1:i])); s=json.loads(pathlib.Path("schema/genealogy.schema.json").read_text(encoding="utf-8")); Draft202012Validator.check_schema(s); Draft202012Validator(s,format_checker=FormatChecker()).validate(d); ids=[e["id"] for e in d.get("self-citation",[]) if "id" in e]; dup=sorted({x for x in ids if ids.count(x)>1}); assert not dup, "duplicate self-citation id(s): "+", ".join(dup); print("GENEALOGY.md: valid")'
 ```
 
 ### PowerShell
 
 ```powershell
-py -m pip install --quiet PyYAML jsonschema; py -c "import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path('GENEALOGY.md'); l=p.read_text(encoding='utf-8').splitlines(); assert l and l[0]=='---', 'first line must be ---'; i=next(i for i in range(1,len(l)-1) if l[i]=='---' and l[i+1]==''); d=yaml.safe_load('\n'.join(l[1:i])); s=json.loads(pathlib.Path('schema/genealogy.schema.json').read_text(encoding='utf-8')); Draft202012Validator.check_schema(s); Draft202012Validator(s,format_checker=FormatChecker()).validate(d); print('GENEALOGY.md: valid')"
+py -m pip install --quiet PyYAML jsonschema
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+py -c "import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path('GENEALOGY.md'); l=p.read_text(encoding='utf-8').splitlines(); assert l and l[0]=='---', 'first line must be ---'; i=next(i for i in range(1,len(l)-1) if l[i]=='---' and l[i+1]==''); d=yaml.safe_load('\n'.join(l[1:i])); s=json.loads(pathlib.Path('schema/genealogy.schema.json').read_text(encoding='utf-8')); Draft202012Validator.check_schema(s); Draft202012Validator(s,format_checker=FormatChecker()).validate(d); ids=[e['id'] for e in d.get('self-citation',[]) if 'id' in e]; dup=sorted({x for x in ids if ids.count(x)>1}); assert not dup, 'duplicate self-citation id(s): '+', '.join(dup); print('GENEALOGY.md: valid')"
 ```
 
 The closing delimiter is the first later standalone `---` followed immediately by a blank line. A Markdown horizontal rule written as `---` after that close is ordinary body content and does not affect extraction.
