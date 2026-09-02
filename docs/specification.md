@@ -180,16 +180,17 @@ A project SHOULD use the established mechanism appropriate to each obligation. A
 
 ## 14. Validation
 
-The normative schema uses [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12). A validator must:
+The normative schema uses [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12). A schema validator MUST:
 
 1. extract the YAML document using section 4;
-2. parse the YAML safely;
-3. validate the resulting mapping against the schema with URI and date format checking enabled; and
-4. report semantic integrity warnings, such as duplicate or unresolvable subject IDs, separately from schema errors.
+2. parse the YAML safely; and
+3. validate the resulting mapping against the schema with URI and date format checking enabled.
 
-Network access is not required for ordinary schema validation when the schema is available locally. Cross-repository `source-subject` resolution is optional and cannot change the meaning of an otherwise well-formed lineage entry.
+A full conformance checker MUST additionally reject duplicate local `self-citation.id` values, because JSON Schema cannot express uniqueness by one object property. It SHOULD report an unresolvable external `source-subject` separately as an integrity warning rather than a schema error or semantic retraction.
 
-The repository [README](../README.md) supplies disposable Bash and PowerShell commands using PyYAML and `jsonschema`. They are adoption aids, not a committed validator implementation.
+Network access is not required for ordinary schema validation or local-ID checking when the schema is available locally. Cross-repository `source-subject` resolution is optional and cannot change the meaning of an otherwise well-formed lineage entry.
+
+The repository [README](../README.md) supplies disposable Bash and PowerShell commands using PyYAML and `jsonschema`. They perform schema validation and the local duplicate-ID check. They do not resolve external subject references and are adoption aids, not a committed validator implementation.
 
 ## 15. Versioning and evolution
 
