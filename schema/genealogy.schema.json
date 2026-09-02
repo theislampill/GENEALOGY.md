@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/theislampill/GENEALOGY.md/main/schema/genealogy.schema.json",
+  "title": "GENEALOGY.md draft convention",
+  "description": "Machine-validatable front matter for feature-scoped self-citation guidance and non-exhaustive affirmative lineage statements.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "genealogy-version",
+    "project"
+  ],
+  "properties": {
+    "genealogy-version": {
+      "const": "0.1.0-draft.1",
+      "description": "The exact draft convention version used by this document."
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "self-citation": {
+      "type": "array",
+      "description": "Feature-scoped guidance published by this project for possible descendants.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/self-citation-entry"
+      }
+    },
+    "lineage": {
+      "type": "array",
+      "description": "Non-exhaustive affirmative statements about antecedents known to this project.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/lineage-entry"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "self-citation"
+      ]
+    },
+    {
+      "required": [
+        "lineage"
+      ]
+    }
+  ],
+  "$defs": {
+    "non-empty-string": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "local-subject-id": {
+      "type": "string",
+      "description": "A repository-local, stable identifier. Lowercase ASCII letters and digits separated by single hyphens.",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 1,
+      "maxLength": 96
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uri",
+          "description": "A stable URI identifying the project, normally its canonical repository URL."
+        },
+        "name": {
+          "$ref": "#/$defs/non-empty-string"
+        }
+      }
+    },
+    "self-citation-entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "cite-when",
+        "do-not-cite-when"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/local-subject-id"
+        },
+        "subject": {
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "cite-when": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non-empty-string"
+          }
+        },
+        "do-not-cite-when": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non-empty-string"
+          }
+        }
+      }
+    },
+    "lineage-entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "subject",
+        "relationship",
+        "seen"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "format": "uri",
+          "description": "A URI identifying the antecedent source."
+        },
+        "source-subject": {
+          "$ref": "#/$defs/local-subject-id"
+        },
+        "source-revision": {
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "subject": {
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "relationship": {
+          "type": "string",
+          "enum": [
+            "copied",
+            "adapted",
+            "vendored",
+            "translated",
+            "reimplemented",
+            "behaviorally-reproduced",
+            "inspired",
+            "unknown"
+          ]
+        },
+        "seen": {
+          "type": "string",
+          "format": "date",
+          "description": "The calendar date on which the source was first seen for the work being recorded. Quote this value in YAML."
+        },
+        "source-license": {
+          "$ref": "#/$defs/non-empty-string"
+        },
+        "applies-to": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non-empty-string"
+          }
+        },
+        "uncertainty": {
+          "$ref": "#/$defs/non-empty-string"
+        }
+      }
+    }
+  }
+}
