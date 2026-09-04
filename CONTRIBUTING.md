@@ -11,9 +11,11 @@ A field, relationship, or semantic change should include:
 1. the concrete problem it solves;
 2. a concrete example from a real or realistic repository;
 3. the exact schema and prose change proposed;
-4. its effect on backwards compatibility and existing `0.1.0-draft.1` files;
+4. its effect on backwards compatibility and existing `0.1.0-draft.2` files;
 5. a migration path when the change is incompatible; and
 6. an SPDX 3.0.1 and SPDX 2.3 comparison when the proposal overlaps artifact relationships.
+
+A proposal affecting `seen`, temporal precision, or qualification must state which lexical forms become valid or invalid, whether existing values change meaning, and how tools preserve precision. Do not use dummy exact dates for unknown periods.
 
 Run the disposable validation command in the [README](README.md) before submitting a pull request.
 

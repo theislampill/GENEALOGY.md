@@ -1,6 +1,7 @@
 # `GENEALOGY.md` draft specification
 
-**Convention version:** `0.1.0-draft.1`  
+**Convention version:** `0.1.0-draft.2`
+
 **Status:** Draft for trial use and external review. This document does not claim that `GENEALOGY.md` is an adopted industry standard.
 
 ## 1. Purpose
@@ -39,7 +40,7 @@ A conforming parser MUST apply this rule:
 
 Authors working with simplistic front-matter tools MAY use `***` or `___` for Markdown horizontal rules, but conforming tools cannot depend on that convention.
 
-The extracted YAML MUST decode to a mapping compatible with the JSON data model. It MUST contain only one YAML document. Dates such as `seen` SHOULD be quoted so parsers such as PyYAML do not coerce them into implementation-specific date objects before JSON Schema validation.
+The extracted YAML MUST decode to a mapping compatible with the JSON data model. It MUST contain only one YAML document. Every `seen` value MUST be quoted so parsers such as PyYAML do not coerce date-like values into implementation-specific date objects before JSON Schema validation.
 
 ## 5. Top-level document model
 
@@ -47,7 +48,7 @@ The front matter has these top-level fields:
 
 | Field | Required | Meaning |
 |---|---:|---|
-| `genealogy-version` | Yes | Exact convention version. For this draft it MUST be `0.1.0-draft.1`. |
+| `genealogy-version` | Yes | Exact convention version. For this draft it MUST be `0.1.0-draft.2`. |
 | `project` | Yes | Identity of the project publishing the file. |
 | `self-citation` | Conditional | Non-empty list of citation subjects maintained by this project. |
 | `lineage` | Conditional | Non-empty list of affirmative, non-exhaustive lineage statements. |
@@ -64,7 +65,7 @@ The project identifier is not a claim of copyright ownership or legal authorship
 
 ## 7. `self-citation`
 
-Self-citation guidance is the more stable core of version `0.1.0-draft.1`. It gives a maintainer an affirmative reason to adopt the format: the project can state its own narrow citation boundary instead of leaving descendants to invent one.
+Self-citation guidance is the more stable core of version `0.1.0-draft.2`. It gives a maintainer an affirmative reason to adopt the format: the project can state its own narrow citation boundary instead of leaving descendants to invent one.
 
 Each entry MUST contain:
 
@@ -83,25 +84,50 @@ A self-citation entry is guidance, not a unilateral declaration that every simil
 - `source`: a URI for the antecedent source;
 - `subject`: the particular feature, method, behaviour, structure, implementation, or research result in the publishing project;
 - `relationship`: one value from the draft vocabulary;
-- `seen`: the date the source was first seen for the work being recorded.
+- `seen`: the earliest calendar period, at the precision stated, during which the source was first seen for the work being recorded. It accepts quoted `YYYY`, `YYYY-MM`, or `YYYY-MM-DD` values.
 
 It MAY also contain:
 
 - `source-subject`: a stable local subject ID published by the source;
 - `source-revision`: a commit, tag, release, edition, or dated document;
+- `seen-qualifier`: one of `approximate`, `uncertain`, or `approximate-and-uncertain`, qualifying the reported period without changing its lexical precision;
 - `source-license`: an SPDX expression or other licence identifier when relevant;
 - `applies-to`: destination paths or components; and
 - `uncertainty`: a plain-language qualification.
 
-### 8.1 Non-completeness is normative
+### 8.1 Temporal precision and qualification
+
+`seen` MUST be a quoted string in exactly one of these forms:
+
+- `YYYY` — the calendar year is asserted; no month or day is asserted;
+- `YYYY-MM` — the calendar month is asserted; no day is asserted;
+- `YYYY-MM-DD` — the calendar day is asserted.
+
+The omitted components are not defaults. A conforming tool MUST preserve the lexical precision supplied and MUST NOT expand `"2023"` to `"2023-01-01"` or `"2023-05"` to `"2023-05-01"` during normalisation, export, or rewrite.
+
+Temporal precision is independent of epistemic qualification. A year-only value may be known without approximation or doubt, while a day-level value may be approximate or uncertain.
+
+`seen-qualifier`, when present, MUST be one of:
+
+- `approximate` — the period is an estimate or rounded placement and the actual encounter may have occurred in a nearby period;
+- `uncertain` — the stated period is the best available identification, but the publisher has reason to doubt that it is correct;
+- `approximate-and-uncertain` — both conditions apply.
+
+A qualifier defines no automatic numerical range. The optional `uncertainty` field MAY explain the basis of a qualification, but neither field supplies evidence that a source belongs in lineage.
+
+This draft requires at least year-level temporal knowledge for a structured lineage entry. When an antecedent relationship is otherwise known but no first-seen year can responsibly be reported, the author MAY describe the relationship in the Markdown body. Such prose is outside the structured `lineage` model; tools MUST NOT infer a conforming lineage entry from it. Authors MUST NOT invent a date or use a sentinel date to satisfy the schema.
+
+This version does not implement EDTF suffix notation. Values such as `"2023?"` and `"2023~"` are invalid; use `seen-qualifier` instead.
+
+### 8.2 Non-completeness is normative
 
 A `GENEALOGY.md` lineage list is **not exhaustive**. The `lineage` block is optional, individual relationships may be omitted, and absence has no negative meaning. **Absence does not** assert independent invention, deny that a relationship exists, indicate that a search for antecedents was performed, or imply that every known source was recorded.
 
-Version `0.1.0-draft.1` provides no field for claiming completeness. Tools MUST NOT infer completeness from the presence of a file, the presence of some lineage entries, or an omitted source. An empty `lineage` list is invalid because it can be misread as an affirmative statement that no antecedents exist.
+Version `0.1.0-draft.2` provides no field for claiming completeness. Tools MUST NOT infer completeness from the presence of a file, the presence of some lineage entries, or an omitted source. An empty `lineage` list is invalid because it can be misread as an affirmative statement that no antecedents exist.
 
 This follows the useful distinction made by SPDX between no assertion and an affirmative assertion of none, while remaining a separate convention. SPDX 2.3 likewise states that omitted relationships do not imply that no additional relationships exist.
 
-### 8.2 What an entry does and does not say
+### 8.3 What an entry does and does not say
 
 An entry records a maintainer's engineering or historical characterisation. It does not independently establish copying, copyright derivation, infringement, ownership, priority, entitlement to credit, or licence compliance.
 
@@ -183,8 +209,12 @@ A project SHOULD use the established mechanism appropriate to each obligation. A
 The normative schema uses [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12). A schema validator MUST:
 
 1. extract the YAML document using section 4;
-2. parse the YAML safely; and
-3. validate the resulting mapping against the schema with URI and date format checking enabled.
+2. parse the YAML safely;
+3. validate the resulting mapping against the schema with format checking enabled, including URI checking and calendar validation for full `YYYY-MM-DD` dates;
+4. enforce the three permitted lexical precision forms for `seen`;
+5. reject year `0000` at every precision;
+6. reject unsupported `seen-qualifier` values; and
+7. preserve the distinction between reduced precision and temporal qualification.
 
 A full conformance checker MUST additionally reject duplicate local `self-citation.id` values, because JSON Schema cannot express uniqueness by one object property. It SHOULD report an unresolvable external `source-subject` separately as an integrity warning rather than a schema error or semantic retraction.
 
@@ -196,8 +226,10 @@ The repository [README](../README.md) supplies disposable Bash and PowerShell co
 
 The exact `genealogy-version` value prevents a validator from silently applying incompatible semantics. During the draft period:
 
-- backwards-compatible clarifications MAY retain the same draft version;
-- a schema or semantic change that can invalidate or reinterpret an existing conforming file MUST use a new version; and
+- editorial clarifications that do not alter validation or the interpretation of a conforming field MAY retain the same draft version;
+- any normative schema or semantic change that alters which documents validate or how a conforming field is interpreted MUST use a new convention version, even when every previously conforming document remains conforming; and
 - no draft version should be described as stable until at least one external repository has trialled it and an independent reviewer has assessed the result.
 
-A future version may add redirects or explicit retirement metadata for subject IDs, richer source identities, or SPDX export. Version `0.1.0-draft.1` deliberately omits those features until adoption demonstrates a need.
+The schema `$id` for this draft is version-specific and resolves through the immutable `v0.1.0-draft.2` tag path rather than mutable `main`.
+
+A future version may add redirects or explicit retirement metadata for subject IDs, richer source identities, or SPDX export. Version `0.1.0-draft.2` deliberately omits those features until adoption demonstrates a need.

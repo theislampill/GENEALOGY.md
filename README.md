@@ -4,7 +4,7 @@ A draft, human- and machine-readable convention for **feature-level provenance**
 
 ## Draft status
 
-The current convention version is `0.1.0-draft.1`. It is ready for trial use, not presented as an adopted industry standard.
+The current convention version is `0.1.0-draft.2`. It is ready for trial use, not presented as an adopted industry standard.
 
 The format has two independently optional functions:
 
@@ -26,14 +26,16 @@ Coding agents make that middle layer easier to lose because they can translate c
 1. Copy [`templates/GENEALOGY.md`](templates/GENEALOGY.md) to the root of your repository as `GENEALOGY.md`.
 2. Copy [`schema/genealogy.schema.json`](schema/genealogy.schema.json) to the same relative path in your repository.
 3. Replace the template placeholders and keep at least one non-empty `self-citation` or `lineage` block.
-4. Quote ISO dates, for example `seen: "2026-09-02"`.
+4. Quote every `seen` value, for example `seen: "2026-09-02"`.
 5. Run one of the disposable validation commands below.
+
+`seen` may be quoted as a year (`"2023"`), month (`"2023-05"`), or full date (`"2023-05-14"`). Missing components are not defaults. Use optional `seen-qualifier: approximate|uncertain|approximate-and-uncertain` when the reported period itself is qualified. Do not append EDTF-style `?` or `~`, and do not invent January 1 for an unknown month or day.
 
 Minimal self-citation-only example:
 
 ```yaml
 ---
-genealogy-version: "0.1.0-draft.1"
+genealogy-version: "0.1.0-draft.2"
 project:
   id: "https://github.com/example/project"
   name: "Example Project"
@@ -89,6 +91,7 @@ Before publishing a strong lineage characterisation involving restrictively lice
 - [Copyable template](templates/GENEALOGY.md)
 - [JSON Schema](schema/genealogy.schema.json)
 - [This repository's genealogy](GENEALOGY.md)
+- [Changelog](CHANGELOG.md)
 - [Contributing](CONTRIBUTING.md)
 - [MIT licence](LICENSE)
 

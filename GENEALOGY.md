@@ -1,5 +1,5 @@
 ---
-genealogy-version: "0.1.0-draft.1"
+genealogy-version: "0.1.0-draft.2"
 project:
   id: "https://github.com/theislampill/GENEALOGY.md"
   name: "GENEALOGY.md"

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/theislampill/GENEALOGY.md/main/schema/genealogy.schema.json",
+  "$id": "https://raw.githubusercontent.com/theislampill/GENEALOGY.md/v0.1.0-draft.2/schema/genealogy.schema.json",
   "title": "GENEALOGY.md draft convention",
   "description": "Machine-validatable front matter for feature-scoped self-citation guidance and non-exhaustive affirmative lineage statements.",
   "type": "object",
@@ -11,7 +11,7 @@
   ],
   "properties": {
     "genealogy-version": {
-      "const": "0.1.0-draft.1",
+      "const": "0.1.0-draft.2",
       "description": "The exact draft convention version used by this document."
     },
     "project": {
@@ -60,6 +60,24 @@
       "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
       "minLength": 1,
       "maxLength": 96
+    },
+    "seen-period": {
+      "description": "The earliest calendar period in which the source was first seen for the work being recorded. Lexical precision is semantic: YYYY asserts only a year, YYYY-MM asserts only a month, and YYYY-MM-DD asserts a day. Missing components are not defaults and must not be invented.",
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^(?!0000)[0-9]{4}$"
+        },
+        {
+          "type": "string",
+          "pattern": "^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])$"
+        },
+        {
+          "type": "string",
+          "pattern": "^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$",
+          "format": "date"
+        }
+      ]
     },
     "project": {
       "type": "object",
@@ -149,9 +167,16 @@
           ]
         },
         "seen": {
+          "$ref": "#/$defs/seen-period"
+        },
+        "seen-qualifier": {
           "type": "string",
-          "format": "date",
-          "description": "The calendar date on which the source was first seen for the work being recorded. Quote this value in YAML."
+          "description": "Optional qualification of the reported seen period. Precision and qualification are independent; every qualifier is valid with year, month, or day precision. The qualifier defines no automatic numerical range.",
+          "enum": [
+            "approximate",
+            "uncertain",
+            "approximate-and-uncertain"
+          ]
         },
         "source-license": {
           "$ref": "#/$defs/non-empty-string"
