@@ -1,5 +1,5 @@
 ---
-genealogy-version: "0.1.0-draft.1"
+genealogy-version: "0.1.0-draft.2"
 project:
   id: "https://github.com/OWNER/REPOSITORY"
   name: "Project name"
@@ -18,6 +18,12 @@ self-citation:
 #     source-revision: "optional commit, tag, release, or dated document"
 #     subject: "The particular feature, method, behaviour, or structure in this project."
 #     relationship: "reimplemented"
+# `seen` accepts a quoted year, month, or full date: "2023", "2023-05",
+# or "2023-05-14". Missing components are not defaults.
+# Optional: seen-qualifier: "approximate" | "uncertain" |
+#           "approximate-and-uncertain"
+# If no first-seen year is responsibly known, do not invent one; explain the
+# relationship in Markdown prose instead of structured lineage in this draft.
 #     seen: "2026-09-02"
 #     source-license: "optional SPDX expression or other licence identifier"
 #     applies-to:
