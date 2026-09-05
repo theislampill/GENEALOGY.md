@@ -22,8 +22,9 @@ authoring and judging independence were not certified. It does not establish a
 clean causal treatment advantage, general efficacy or universal safety. Local
 fidelity, integrity, co-delivery and filesystem-relocation checks are separate
 from native host installation, activation, discovery, resupply and context value.
-The latter comparison remains incomplete. This candidate is not admitted as a
-normative, required, recommended or generally proven procedure.
+The latter comparison remains incomplete. This candidate is not normative or
+required, and the available evidence does not establish that it generally
+outperforms manual or minimally instructed authoring.
 
 ## Inspect and test
 

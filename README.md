@@ -25,11 +25,30 @@ Coding agents make that middle layer easier to lose because they can translate c
 
 ## Five-minute adoption
 
+There are two ways to author a `GENEALOGY.md`. Both produce the same convention document; using the skill is **not** required for conformance.
+
+### Assisted authoring with `make-genealogy`
+
+If your coding-agent host supports Agent Skills, the experimental [`make-genealogy`](skills/README.md) skill is the convenient assisted route for creating or updating a repository's `GENEALOGY.md`.
+
+It packages the bounded authoring procedure, the pinned draft.2 resources, and a fail-closed structural validator. The procedure is designed to preserve an existing file, distinguish supported public lineage from unresolved candidates, avoid invented precision, and ask only when a material authoring decision cannot responsibly be made from the available evidence.
+
+1. Import [`dist/make-genealogy.skill`](dist/make-genealogy.skill) using your host's supported skill mechanism, or expose the editable [`skills/make-genealogy/`](skills/make-genealogy/) directory where your host can load skills.
+2. Invoke `make-genealogy` for the repository you want to document.
+3. Review the proposed `GENEALOGY.md`; the skill does not establish historical truth or publication authority.
+4. Run the bundled structural validator before publishing.
+
+Native installation, discovery and invocation have not yet been comparatively qualified across hosts. If your runtime does not recognise the package, see the [experimental status, boundaries and direct validation instructions](skills/README.md).
+
+### Manual authoring
+
+If you are not using the skill:
+
 1. Copy [`templates/GENEALOGY.md`](templates/GENEALOGY.md) to the root of your repository as `GENEALOGY.md`.
 2. Copy [`schema/genealogy.schema.json`](schema/genealogy.schema.json) to the same relative path in your repository.
 3. Replace the template placeholders and keep at least one non-empty `self-citation` or `lineage` block.
 4. Quote every `seen` value, for example `seen: "2026-09-02"`.
-5. Run one of the disposable validation commands below.
+5. Run one of the fail-closed validation commands below.
 
 `seen` may be quoted as a year (`"2023"`), month (`"2023-05"`), or full date (`"2023-05-14"`). Missing components are not defaults. Use optional `seen-qualifier: approximate|uncertain|approximate-and-uncertain` when the reported period itself is qualified. Do not append EDTF-style `?` or `~`, and do not invent January 1 for an unknown month or day.
 
@@ -57,20 +76,22 @@ self-citation:
 
 ## Self-service validation
 
-These commands install [PyYAML](https://pyyaml.org/) and [`jsonschema`](https://python-jsonschema.readthedocs.io/) into the active Python environment, extract the first qualifying YAML front-matter block, inspect its YAML syntax tree to require every `lineage[].seen` scalar to be explicitly single- or double-quoted, validate the decoded data against the local schema, reject duplicate local subject IDs, and print `GENEALOGY.md: valid` on success.
+The experimental skill carries the maintained validator at [`skills/make-genealogy/scripts/validate_public.py`](skills/make-genealogy/scripts/validate_public.py). The standalone commands below mirror its core draft.2 checks for manual adopters: they install [PyYAML](https://pyyaml.org/) plus `jsonschema` with non-GPL format support, verify that URI checking is actually registered and working, extract the first qualifying YAML front-matter block, require every `lineage[].seen` scalar to be explicitly quoted, validate the decoded data against the local schema, reject duplicate local subject IDs, and print `GENEALOGY.md: valid` on success.
+
+If URI-format capability is unavailable or inert, these commands fail rather than reporting the document valid.
 
 ### Bash
 
 ```bash
-python -m pip install --quiet PyYAML jsonschema && python -c 'import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path("GENEALOGY.md"); l=p.read_text(encoding="utf-8").splitlines(); assert l and l[0]=="---", "first line must be ---"; i=next(i for i in range(1,len(l)-1) if l[i]=="---" and l[i+1]==""); f="\n".join(l[1:i]); n=yaml.compose(f,Loader=yaml.SafeLoader); d=yaml.safe_load(f); lns=[] if not isinstance(n,yaml.nodes.MappingNode) else [v for k,v in n.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=="lineage"]; ln=lns[-1] if lns else None; sn=[] if not isinstance(ln,yaml.nodes.SequenceNode) else [(k,v) for e in ln.value if isinstance(e,yaml.nodes.MappingNode) for k,v in e.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=="seen"]; dl=d.get("lineage") if isinstance(d,dict) else None; ec=sum(1 for e in dl if isinstance(e,dict) and "seen" in e) if isinstance(dl,list) else 0; assert len(sn)==ec and all(isinstance(v,yaml.nodes.ScalarNode) and v.style in (chr(39),chr(34)) and v.start_mark.index>=k.end_mark.index for k,v in sn), "every lineage[].seen value must be explicitly single- or double-quoted"; s=json.loads(pathlib.Path("schema/genealogy.schema.json").read_text(encoding="utf-8")); Draft202012Validator.check_schema(s); Draft202012Validator(s,format_checker=FormatChecker()).validate(d); ids=[e["id"] for e in d.get("self-citation",[]) if "id" in e]; dup=sorted({x for x in ids if ids.count(x)>1}); assert not dup, "duplicate self-citation id(s): "+", ".join(dup); print("GENEALOGY.md: valid")'
+python -m pip install --quiet PyYAML 'jsonschema[format-nongpl]' && python -c 'import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path("GENEALOGY.md"); l=p.read_text(encoding="utf-8").splitlines(); assert l and l[0]=="---", "first line must be ---"; i=next(i for i in range(1,len(l)-1) if l[i]=="---" and l[i+1]==""); f="\n".join(l[1:i]); n=yaml.compose(f,Loader=yaml.SafeLoader); d=yaml.safe_load(f); lns=[] if not isinstance(n,yaml.nodes.MappingNode) else [v for k,v in n.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=="lineage"]; ln=lns[-1] if lns else None; sn=[] if not isinstance(ln,yaml.nodes.SequenceNode) else [(k,v) for e in ln.value if isinstance(e,yaml.nodes.MappingNode) for k,v in e.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=="seen"]; dl=d.get("lineage") if isinstance(d,dict) else None; ec=sum(1 for e in dl if isinstance(e,dict) and "seen" in e) if isinstance(dl,list) else 0; assert len(sn)==ec and all(isinstance(v,yaml.nodes.ScalarNode) and v.style in (chr(39),chr(34)) and v.start_mark.index>=k.end_mark.index for k,v in sn), "every lineage[].seen value must be explicitly single- or double-quoted"; s=json.loads(pathlib.Path("schema/genealogy.schema.json").read_text(encoding="utf-8")); Draft202012Validator.check_schema(s); fc=FormatChecker(); assert "uri" in fc.checkers and fc.conforms("https://example.org/validation-control","uri") and fc.conforms("urn:example:validation-control","uri") and not fc.conforms("not a uri","uri"), "required uri format validation unavailable or inert"; Draft202012Validator(s,format_checker=fc).validate(d); ids=[e["id"] for e in d.get("self-citation",[]) if "id" in e]; dup=sorted({x for x in ids if ids.count(x)>1}); assert not dup, "duplicate self-citation id(s): "+", ".join(dup); print("GENEALOGY.md: valid")'
 ```
 
 ### PowerShell
 
 ```powershell
-py -m pip install --quiet PyYAML jsonschema
+py -m pip install --quiet PyYAML "jsonschema[format-nongpl]"
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-py -c "import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path('GENEALOGY.md'); l=p.read_text(encoding='utf-8').splitlines(); assert l and l[0]=='---', 'first line must be ---'; i=next(i for i in range(1,len(l)-1) if l[i]=='---' and l[i+1]==''); f='\n'.join(l[1:i]); n=yaml.compose(f,Loader=yaml.SafeLoader); d=yaml.safe_load(f); lns=[] if not isinstance(n,yaml.nodes.MappingNode) else [v for k,v in n.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=='lineage']; ln=lns[-1] if lns else None; sn=[] if not isinstance(ln,yaml.nodes.SequenceNode) else [(k,v) for e in ln.value if isinstance(e,yaml.nodes.MappingNode) for k,v in e.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=='seen']; dl=d.get('lineage') if isinstance(d,dict) else None; ec=sum(1 for e in dl if isinstance(e,dict) and 'seen' in e) if isinstance(dl,list) else 0; assert len(sn)==ec and all(isinstance(v,yaml.nodes.ScalarNode) and v.style in (chr(39),chr(34)) and v.start_mark.index>=k.end_mark.index for k,v in sn), 'every lineage[].seen value must be explicitly single- or double-quoted'; s=json.loads(pathlib.Path('schema/genealogy.schema.json').read_text(encoding='utf-8')); Draft202012Validator.check_schema(s); Draft202012Validator(s,format_checker=FormatChecker()).validate(d); ids=[e['id'] for e in d.get('self-citation',[]) if 'id' in e]; dup=sorted({x for x in ids if ids.count(x)>1}); assert not dup, 'duplicate self-citation id(s): '+', '.join(dup); print('GENEALOGY.md: valid')"
+py -c "import json,pathlib,yaml; from jsonschema import Draft202012Validator,FormatChecker; p=pathlib.Path('GENEALOGY.md'); l=p.read_text(encoding='utf-8').splitlines(); assert l and l[0]=='---', 'first line must be ---'; i=next(i for i in range(1,len(l)-1) if l[i]=='---' and l[i+1]==''); f='\n'.join(l[1:i]); n=yaml.compose(f,Loader=yaml.SafeLoader); d=yaml.safe_load(f); lns=[] if not isinstance(n,yaml.nodes.MappingNode) else [v for k,v in n.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=='lineage']; ln=lns[-1] if lns else None; sn=[] if not isinstance(ln,yaml.nodes.SequenceNode) else [(k,v) for e in ln.value if isinstance(e,yaml.nodes.MappingNode) for k,v in e.value if isinstance(k,yaml.nodes.ScalarNode) and k.value=='seen']; dl=d.get('lineage') if isinstance(d,dict) else None; ec=sum(1 for e in dl if isinstance(e,dict) and 'seen' in e) if isinstance(dl,list) else 0; assert len(sn)==ec and all(isinstance(v,yaml.nodes.ScalarNode) and v.style in (chr(39),chr(34)) and v.start_mark.index>=k.end_mark.index for k,v in sn), 'every lineage[].seen value must be explicitly single- or double-quoted'; s=json.loads(pathlib.Path('schema/genealogy.schema.json').read_text(encoding='utf-8')); Draft202012Validator.check_schema(s); fc=FormatChecker(); assert 'uri' in fc.checkers and fc.conforms('https://example.org/validation-control','uri') and fc.conforms('urn:example:validation-control','uri') and not fc.conforms('not a uri','uri'), 'required uri format validation unavailable or inert'; Draft202012Validator(s,format_checker=fc).validate(d); ids=[e['id'] for e in d.get('self-citation',[]) if 'id' in e]; dup=sorted({x for x in ids if ids.count(x)>1}); assert not dup, 'duplicate self-citation id(s): '+', '.join(dup); print('GENEALOGY.md: valid')"
 ```
 
 The closing delimiter is the first later standalone `---` followed immediately by a blank line. A Markdown horizontal rule written as `---` after that close is ordinary body content and does not affect extraction.
