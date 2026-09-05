@@ -6,6 +6,8 @@ A draft, human- and machine-readable convention for **feature-level provenance**
 
 The current convention version is `0.1.0-draft.2`. It is ready for trial use, not presented as an adopted industry standard.
 
+The [experimental authoring skill](skills/README.md) is optional and is not part of conformance. The [methodology/research note](docs/research/README.md) is non-normative; neither addition changes the convention.
+
 The format has two independently optional functions:
 
 - **Self-citation:** publish a narrow, feature-scoped answer to “when should descendants acknowledge this project, and what does not count?”
@@ -87,6 +89,8 @@ Before publishing a strong lineage characterisation involving restrictively lice
 
 ## Files
 
+### Normative draft standard and repository
+
 - [Draft specification](docs/specification.md)
 - [Copyable template](templates/GENEALOGY.md)
 - [JSON Schema](schema/genealogy.schema.json)
@@ -94,6 +98,17 @@ Before publishing a strong lineage characterisation involving restrictively lice
 - [Changelog](CHANGELOG.md)
 - [Contributing](CONTRIBUTING.md)
 - [MIT licence](LICENSE)
+
+### Experimental authoring skill
+
+- [Status and usage boundaries](skills/README.md)
+- [Skill source](skills/make-genealogy/SKILL.md)
+- [Generated experimental archive and build identity](dist/README.md)
+
+### Non-normative methodology and design
+
+- [The Cost of a Decisive Revision: Evidence, Reuse, and Self-Application](docs/research/README.md)
+- [Inner authoring and outer project-evolution models](docs/design/authoring-model.md)
 
 ## Licence
 

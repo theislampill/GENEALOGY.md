@@ -1,0 +1,8 @@
+# Pinned text resources must retain LF bytes on every checkout.
+skills/make-genealogy/** text eol=lf
+docs/research/*.tex text eol=lf
+scripts/*.py text eol=lf
+dist/*.skill binary
+docs/research/*.pdf binary
+# The hash-pinned operator contains intentional Markdown hard breaks.
+skills/make-genealogy/references/operator.md whitespace=-blank-at-eol

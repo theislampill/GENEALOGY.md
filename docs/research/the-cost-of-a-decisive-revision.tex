@@ -1,0 +1,156 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.86in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[hidelinks,pdfauthor={},pdftitle={The Cost of a Decisive Revision: Evidence, Reuse, and Self-Application},pdfsubject={Decision cost, evidence reuse, and self-applicable revision},pdfkeywords={reflexive revision, decision trees, evidence budgets, evidence reuse, behavioural equivalence}]{hyperref}
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{1em}
+\setlength{\emergencystretch}{1.2em}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\beh}{\operatorname{beh}}
+\newcommand{\doi}[1]{\href{https://doi.org/#1}{\texttt{doi:#1}}}
+% Reproducible anonymous PDF metadata with the documented pdfLaTeX build.
+\pdfinfoomitdate=1
+\pdftrailerid{}
+\pdfsuppressptexinfo=-1
+\begin{document}
+\begin{center}
+{\Large\bfseries The Cost of a Decisive Revision:}\par
+\vspace{4pt}
+{\normalsize\bfseries Evidence, Reuse, and Self-Application}
+\end{center}
+\vspace{-3pt}
+\begin{abstract}
+A revision decision can be identifiable but unaffordable; evidence sufficient for it can become inadequate when its purpose changes. In a finite exact-observation model, standard decision-tree optimisation gives the minimum worst-case cost of a sound decision, both from current evidence and after reusing a retained record. A classical address-function example separates adaptive inquiry from a fixed test battery. Two elementary obstructions delimit evidence reuse and inference from behavioural parity, while a changing-objective cycle shows why locally justified revision need not terminate. The same account applies to revisions of a method and to revisions made with it. Its guarantees are relative to a specified decision rule and observation model; it neither selects the purpose nor certifies its own premises.
+\end{abstract}
+
+\section{Admission under partial information}
+A revision has two distinct questions: \emph{which change would be acceptable}, and \emph{what observations justify accepting it}? Fix a proposed transition $x\to y$, a bounded target $T$, and a finite nonempty set $C$ of situations compatible with the current evidence. The actual situation $w_*$ is unknown but is assumed to lie in $C$. A known Boolean predicate $g:C\to\{0,1\}$ specifies the decision; for example,
+\begin{equation}
+ g(w)=\ind\{\text{$x\to y$ is authorised, feasible, and preferred under $T$ in $w$}\}.
+ \label{eq:guard}
+\end{equation}
+Hard constraints are vetoes, not penalties that another benefit can outweigh. Preference may be a declared strict partial or lexicographic order. If a scalar loss $L_T$ is justified, preference may instead require $L_T(y,w)<L_T(x,w)$. No gradient or numerical weighting is assumed. The target must determine what counts as adequate: minimising output size alone can prefer an empty answer to a fulfilled request. An unspecified target or preference leaves $g$ unspecified; an evidence rule cannot supply the missing purpose.
+
+Let $\mathcal Q$ be a finite set of authorised probes. Each $h\in\mathcal Q$ has a known deterministic response map $h:C\to Y_h$ and fixed finite cost $c_h>0$. All probes remain available and leave the situation unchanged, or run on resettable copies. Their meanings and costs are fixed during the decision. Protocols are deterministic; the cost of a run is the sum of its probe costs. Model construction, verification of probe reliability, and computation of an inquiry policy are not included in that sum.
+
+The tables for $g$ and $h$ are supplied model inputs, not information obtained for free about $w_*$. The model excludes unrepresented noise, drift, and unreliable observations. A transcript narrows $C$ to a nonempty residual set $S$. A method is \emph{uniformly sound} if it returns $b\in\{0,1\}$ only when $g(w)=b$ for every $w\in S$. Otherwise it must seek evidence or report \emph{unresolved}. An empty $S$ signals model inconsistency, not permission to admit.
+
+\paragraph{The elementary obstruction.}
+Set $O(w)=(h(w))_{h\in\mathcal Q}$. A sound decision is possible for every $w\in C$ exactly when
+\begin{equation}
+ O(w)=O(v)\quad\Longrightarrow\quad g(w)=g(v).
+ \label{eq:ident}
+\end{equation}
+Indistinguishable situations generate the same transcript under any adaptive protocol. Conversely, querying all probes leaves an observation class on which $g$ is constant exactly under~\eqref{eq:ident}. This familiar indistinguishability argument~\cite{knowledge,trees} establishes possibility, not economy: the maps and predicate may satisfy it even when exhaustive inquiry is prohibitively costly.
+
+\section{Minimum evidence cost}
+For nonempty $S\subseteq C$, write $h(S)=\{h(w):w\in S\}$ and
+$S_{h,a}=\{w\in S:h(w)=a\}$. Define
+\begin{equation}
+ V_g(S)=
+ \begin{cases}
+ 0, & |g(S)|=1,\\[3pt]
+ \displaystyle\min_{\substack{h\in\mathcal Q\\|h(S)|>1}}
+ \left(c_h+\max_{a\in h(S)}V_g(S_{h,a})\right), & |g(S)|>1.
+ \end{cases}
+ \label{eq:dp}
+\end{equation}
+Take $\min\varnothing=+\infty$. Informative probes leave strictly smaller residual sets, so the recursion is well-defined. Constant probes may be omitted under fixed availability. This is the priced-probe form of decision-tree optimisation; reference~\cite{trees} surveys the unit-cost model.
+
+\begin{theorem}[Budgeted relative completeness]
+\label{thm:budget}
+$V_g(S)$ is the minimum worst-case total probe cost of a uniformly sound protocol that decides $g$ on every situation in $S$; it is infinite if no such protocol exists. Suppose a retained record $r:C\to Z$ has a known, unchanged meaning and is available without additional cost. Before its value is known, the minimum worst-case additional cost is
+\begin{equation}
+ V_g(C\mid r)=\max_{z\in r(C)}V_g(C_z),
+ \qquad C_z=\{w\in C:r(w)=z\}.
+ \label{eq:reuse}
+\end{equation}
+A finite budget $B$ guarantees a decision exactly when $V_g(C\mid r)\le B$. Once the record value $z$ is known, the relevant additional cost is $V_g(C_z)$.
+\end{theorem}
+\begin{proof}
+A constant-labelled set needs no query. Otherwise a deciding protocol must query. Delete initial constant probes and let $h$ be its first informative probe. After each answer $a$, its remaining protocol must decide on $S_{h,a}$. Induction on $|S|$ bounds that remaining cost below by $V_g(S_{h,a})$, giving the lower bound in~\eqref{eq:dp}. When the recurrence is finite, choose a minimising probe and attach optimal subtrees provided by the same induction; this attains the bound. If every term is infinite, no deciding tree exists. A record value selects a fibre $C_z$ before new probes are paid for. Independent optimisation within each fibre, followed by the worst case over $z$, proves~\eqref{eq:reuse}.
+\end{proof}
+
+The recurrence supplies an optimal next probe and a stopping rule, but may require exponentially many residual sets; it is not a total engineering-cost optimum. If $B<V_g(S)<\infty$, some branches may be affordable but a decision cannot be guaranteed. If $V_g(S)=\infty$, repeating exact probes adds no distinguishing information. Neither case is a negative verdict on the proposed change.
+
+\paragraph{A strict adaptive advantage.}
+For the classical address function~\cite{trees}, an input consists of $k\ge1$ address bits $a$ and $2^k$ data bits $z$, with output $g(a,z)=z_{\mathrm{index}(a)}$. Only unit-cost individual-bit queries are permitted. Reading the address and then the selected data bit uses $k+1$ queries.
+
+For the matching lower bound, every one of the $n=k+2^k$ variables is essential: each data bit can be selected, and flipping any address bit can select two data bits with different values. If a variable never labels a query node anywhere in an exact tree, two inputs differing only there follow the same path, contradicting essentiality. Thus the \emph{whole tree} needs at least $n$ internal nodes. A binary tree of depth at most $k$ has at most
+$1+2+\cdots+2^{k-1}=2^k-1<n$
+internal nodes in total, so depth $k$ is impossible. This counts nodes across the tree, not queries along one path. The optimal adaptive depth is therefore exactly $k+1$.
+
+A nonadaptive protocol fixes all queried coordinates before any answers. It must include every essential variable: otherwise an omitted variable has two witnessing inputs that its fixed observations cannot distinguish. Its cost is exactly $k+2^k$. At $k=4$, the comparison is five queries versus twenty. This is an exponential separation in address length $k$, not a guarantee that adaptive inquiry improves every task, nor a comparison of parallel elapsed time.
+
+\section{Evidence reuse and reflexive revision}
+An old decision need not settle a new one. With unchanged situations and record meanings, replacing $g$ by $g'$ in~\eqref{eq:reuse} gives the required additional budget. No new probes are needed exactly when $g'$ is constant on every record fibre. Earlier acceptance alone does not establish that condition.
+
+\begin{proposition}[No universally sufficient lossy record]
+A record $r:C\to Z$ suffices without further probes for every Boolean decision on $C$ if and only if $r$ is injective.
+\end{proposition}
+\begin{proof}
+An injective record identifies the situation. If distinct $w,v$ have $r(w)=r(v)$, choose a predicate giving them opposite labels. No function of the record can decide it.
+\end{proof}
+
+For a restricted family of future decisions, a record need only avoid merging situations on which any member of that family disagrees; much smaller records may suffice. This limits universal sufficiency, not the legitimacy of keeping rich records or collecting evidence before its eventual use is known. Purpose-agnostic methods can reuse the same decision architecture, but their evidence requirements remain purpose-relative. If the artefact or observation meanings change, evidence transfer requires a justified relation to the new situation space. A digest can check retained bytes; it cannot supply that relation or certify their factual truth.
+
+\paragraph{Reflexivity is an obligation, not a certificate.}
+An object-level revision changes an artefact. A method-level revision changes how such revisions are judged. The latter can be treated as another proposed transition: assess its acceptability under the predecessor rule, and separately check which evidence remains sufficient under the successor rule. These are different checks. The successor must not become its own sole warrant merely by declaring itself acceptable. This discipline is an engineering obligation; composing locally sound decisions does not independently certify the assumptions that made them sound.
+
+Nor does local descent guarantee termination when objectives may change. Let $x\in\{0,1\}$, $L_0(x)=x$, and $L_1(x)=1-x$. If the method changes are permitted, the cycle
+\[
+ (L_0,1)\longrightarrow(L_1,0)\longrightarrow(L_0,1)
+\]
+strictly improves the predecessor's loss at each step:
+$L_0(0)<L_0(1)$ and $L_1(1)<L_1(0)$.
+No local judgement is erroneous, yet the pair repeats indefinitely. A common well-founded order strictly decreased by every accepted transition would suffice for termination. Changing local losses alone supply no such order.
+
+\paragraph{Concrete observations and symbolic alternatives.}
+At residual set $S$, select a probe attaining~\eqref{eq:dp}, execute it, and replace $S$ by $S_{h,h(w_*)}$. The symbolic alternatives determine which observation to seek; its concrete answer selects the next branch. If the full continuation cost fits the remaining budget, this policy preserves the guarantee in Theorem~\ref{thm:budget}. Merely affording the next probe is not enough. A cheaper heuristic may be used, but inherits no optimality or budget guarantee without a separate argument.
+
+This organisation is related to the concrete/symbolic feedback used in directed testing and concolic execution~\cite{dart,cute,predictive}. Here the symbolic state is a set of compatible situations, not necessarily a program path condition. Program-level concolic testing additionally requires an execution semantics and constraint-solving machinery. The finite evidence model neither supplies those components nor proves that a correct answer was reached by this procedure.
+
+\section{Behavioural parity leaves delivery undecided}
+Two representations may agree on every task output while differing in the work required to obtain, invoke, or maintain them. Those delivery costs are separate observations; they are not encoded in task-output equivalence alone.
+
+\begin{proposition}[Behaviour does not identify delivery cost]
+Without assumptions linking task behaviour to delivery cost, complete task-input/output equivalence of two representations does not determine the sign of their delivery-cost difference.
+\end{proposition}
+\begin{proof}
+Fix $p_0,p_1$ with $\beh(p_0,u)=\beh(p_1,u)$ for every task input $u$. Take situations $w_-,w_+$ with identical task behaviours, authorisation and feasibility. Let delivery costs be
+$d(p_0,w_-)=d(p_0,w_+)=1$, but
+$d(p_1,w_-)=0$ and $d(p_1,w_+)=2$.
+The rule ``same behaviour, lower delivery cost'' admits $p_1$ only in $w_-$. Every behaviour-only observation agrees across the two situations.
+\end{proof}
+
+In this two-situation model, behaviour-only $V_g$ is infinite. Adding one authorised unit-cost probe of the delivery-cost difference makes it exactly one. Further task-correctness tests cannot replace the missing coordinate. Conversely, a probe measuring installation or invocation effort is not behaviour-only in this model. The result does not establish that either representation is cheaper; it specifies why that conclusion needs different evidence.
+
+Permission to construct a candidate for measurement is likewise distinct from admitting it for use. A bounded exploratory change can be judged under its own purpose, costs and constraints without claiming that the final adoption question has been answered. Across object and method revisions alike, the operative requirements are the same: specify the decision, identify observations that can separate its answers, price the inquiry, and reassess evidence when the decision changes. This is a conditional decision procedure, not a self-certifying or universally convergent methodology.
+
+\begin{thebibliography}{9}
+\small\raggedright
+\setlength{\itemsep}{2pt}
+\bibitem{knowledge}
+\emph{Knowledge and common knowledge in a distributed environment}.
+Journal of the ACM 37(3), 549--587 (1990). \doi{10.1145/79147.79161}.
+\bibitem{trees}
+\emph{Complexity measures and decision tree complexity: a survey}.
+Theoretical Computer Science 288(1), 21--43 (2002).
+\doi{10.1016/S0304-3975(01)00144-X}.
+\bibitem{dart}
+\emph{DART: directed automated random testing}.
+Proceedings of PLDI, 213--223 (2005). \doi{10.1145/1065010.1065036}.
+\bibitem{cute}
+\emph{CUTE: a concolic unit testing engine for C}.
+Proceedings of ESEC/FSE, 263--272 (2005). \doi{10.1145/1081706.1081750}.
+\bibitem{predictive}
+\emph{Predictive testing: amplifying the effectiveness of software testing}.
+Technical Report UCB/EECS-2007-35 (2007).
+\href{https://www2.eecs.berkeley.edu/Pubs/TechRpts/2007/EECS-2007-35.html}{Institutional report record}.
+\end{thebibliography}
+\end{document}
