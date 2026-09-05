@@ -12,6 +12,14 @@ self-citation:
     do-not-cite-when:
       - "Using YAML front matter, JSON Schema, SPDX relationships, or ordinary licence notices independently."
       - "Maintaining generic dependency, SBOM, copyright, licence, contributor, or academic-citation metadata."
+  - id: "bounded-genealogy-authoring"
+    subject: "The experimental make-genealogy authoring discipline: preserve existing public content, separate supported claims from unresolved candidates, and apply target-bounded semantic adequacy before minimising meaning-equivalent output."
+    cite-when:
+      - "Substantially adopting or translating this particular ordered authoring procedure for repository genealogy work."
+    do-not-cite-when:
+      - "Using the GENEALOGY.md convention without adopting this experimental authoring procedure."
+      - "Using generic validation, evidence review, caution, minimality or skill packaging independently."
+      - "Merely invoking the supplied skill to author a file, without adopting its procedure as part of a descendant implementation."
 lineage:
   - source: "https://x.com/francedot/article/2095052001667408295"
     subject: "The problem framing that coding agents can translate, reconstruct, or behaviourally reproduce distinctive open-source implementations while losing usable records of origin."
@@ -48,9 +56,11 @@ lineage:
 
 # Genealogy of `GENEALOGY.md`
 
-This repository dogfoods the draft convention it proposes. The front matter publishes one narrowly scoped self-citation subject and records four specific intellectual antecedents. Each lineage entry states what the source influenced and what it did **not** supply.
+This repository dogfoods the draft convention it proposes. The front matter publishes two narrowly scoped self-citation subjects and records four specific intellectual antecedents. Each lineage entry states what the source influenced and what it did **not** supply.
 
 The list is intentionally non-exhaustive. An omitted source has no negative meaning: it does not assert independent invention, deny a relationship, or imply that every possible antecedent was investigated.
+
+The self-citation subjects distinguish the convention from the separately optional experimental authoring discipline. Neither asserts general efficacy or adds a conformance requirement.
 
 ## Suggested descendant entry
 
