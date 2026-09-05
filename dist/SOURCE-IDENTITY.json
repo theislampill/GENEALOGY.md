@@ -2,23 +2,27 @@
   "source_directory": "skills/make-genealogy",
   "status": "EXPERIMENTAL_CANDIDATE",
   "source_identity_method": "SHA-256 of UTF-8 compact sorted-key JSON file map plus LF",
-  "source_file_set_sha256": "e1ebfe0e89331081c4c63b77e4f1185965e0b57d8f46e9f9be8e7fe35ca96404",
+  "source_file_set_sha256": "f811cb1782c328db7672d13362ccdd1c1e96b2d0a1b619310f8c057226f970cf",
   "distribution_files": {
     "CHECKSUMS.sha256": {
-      "sha256": "4f878d3b20ec0223c4f6e061e36b8ccbeead9185d56ead02df4b3a98956c62cb",
-      "bytes": 897
+      "sha256": "c3a3035479dc7df4bebcef56cdfa0c3173c60d4e66d9448e716ecbbc80e6b1bc",
+      "bytes": 983
     },
     "MANIFEST.json": {
-      "sha256": "37d94e892f39284f89135de3fe9d75d3259abe426efd9022fac067abfe62cee5",
-      "bytes": 2006
+      "sha256": "b519d4ef79b53ca85d0fd259dcc1df2f7e4ee05ed8745ef116553227b5975d63",
+      "bytes": 2561
     },
     "SKILL.md": {
-      "sha256": "f41eaf6f3bef0044d28a719b204d90f78e526e0323b28c91040569098870d2db",
+      "sha256": "f63fedb178c699db868f2202bcaa5cd9251776cdd7d1490637fdd218a9085569",
       "bytes": 2490
     },
     "canonical/LICENSE": {
       "sha256": "8bc2fed59e2c9fef5dd5bd092195503127ab3941118b34fab857240d5b794f30",
       "bytes": 1069
+    },
+    "canonical/README.md": {
+      "sha256": "d52f5e391dbd5f7f9471bb9d442eb961468342763ff94e91fe2b1cc2607348b8",
+      "bytes": 737
     },
     "canonical/docs/specification.md": {
       "sha256": "f650b7ba3013bbfaf4d836d5da33ab0a45b6bc6f1b2fa85664ef15b691a39e80",
@@ -37,25 +41,23 @@
       "bytes": 8991
     },
     "requirements.txt": {
-      "sha256": "0b0709dc3105d98b29f4fc6a870c15c0cf42191498384ef8a2a32d3fcf5f34ed",
-      "bytes": 33
+      "sha256": "c568d48f5e25f478a16e42d56f5f8fa6ff3ce7d8a1163b6737bfb00f5d6447bd",
+      "bytes": 48
     },
     "scripts/check_package.py": {
-      "sha256": "de7c42907641cbf3f6ac6526d5871e5b1ed096604d7e6f008b694753229d696b",
-      "bytes": 3497
+      "sha256": "bbd3487b595aab9c31d1d73a3ffaaadbc8180f165bb719b6bd497a4e46883c22",
+      "bytes": 3520
     },
     "scripts/validate_public.py": {
-      "sha256": "01d42f79aaf8d247150954133836c86adf34e9be892406eb27b9a81f89c40fc3",
-      "bytes": 2306
+      "sha256": "725eacd8b0bc41b91ee7d29edef9486e9252a2c941d916a48e1c5637dd8b3bd1",
+      "bytes": 4851
     }
   },
-  "repository_only_exclusion": [
-    "canonical/README.md"
-  ],
+  "repository_only_exclusion": [],
   "artifact": "dist/make-genealogy.skill",
-  "artifact_bytes": 21281,
-  "artifact_sha256": "fb8ee0a3b59a5c5ee31e235f9480206a02c282622ff8ac2cb8c74bf91d3898a0",
-  "accepted_f2_artifact_byte_identical": true,
+  "artifact_bytes": 22938,
+  "artifact_sha256": "b6cade520188c2b2505704a14e0227f2818b79e8bf88bc7f9ad68251b2c45078",
+  "accepted_f2_artifact_byte_identical": false,
   "build_command": "python scripts/build_skill.py --check",
   "zip_timestamp": [
     2026,
@@ -66,5 +68,11 @@
     0
   ],
   "compression": "DEFLATE level 6",
-  "native_installation_tested": false
+  "native_installation_tested": false,
+  "package_version": "0.1.0-f2.2",
+  "predecessor_package": {
+    "version": "0.1.0-f2.1",
+    "archive_sha256": "fb8ee0a3b59a5c5ee31e235f9480206a02c282622ff8ac2cb8c74bf91d3898a0",
+    "operator_and_pinned_canonical_bytes_unchanged": true
+  }
 }

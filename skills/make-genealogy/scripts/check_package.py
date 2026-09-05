@@ -15,7 +15,7 @@ ID = "https://raw.githubusercontent.com/theislampill/GENEALOGY.md/v0.1.0-draft.2
 def verify(root: Path) -> dict:
     root = root.resolve()
     manifest = json.loads((root / "MANIFEST.json").read_text(encoding="utf-8"))
-    if manifest["name"] != "make-genealogy" or manifest["package_version"] != "0.1.0-f2.1":
+    if manifest["name"] != "make-genealogy" or manifest["package_version"] != "0.1.0-f2.2":
         raise ValueError("package identity mismatch")
     if manifest["status"] != "EXPERIMENTAL_CANDIDATE":
         raise ValueError("unexpected package status")
@@ -25,7 +25,7 @@ def verify(root: Path) -> dict:
         raise ValueError("standard binding mismatch")
     required = {"references/operator.md", "canonical/docs/specification.md",
                 "canonical/schema/genealogy.schema.json", "canonical/templates/GENEALOGY.md",
-                "canonical/LICENSE", "scripts/validate_public.py", "scripts/check_package.py", "requirements.txt"}
+                "canonical/LICENSE", "canonical/README.md", "scripts/validate_public.py", "scripts/check_package.py", "requirements.txt"}
     if set(manifest["files"]) != required:
         raise ValueError("unexpected or missing semantic resource")
     for rel, expected in manifest["files"].items():

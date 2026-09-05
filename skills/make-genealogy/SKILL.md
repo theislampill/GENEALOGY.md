@@ -4,7 +4,7 @@ description: Use when a maintainer requests creation, preservation, updating, or
 compatibility: Requires access to bundled files. Structural validation uses Python 3, PyYAML and jsonschema. No network, repository-write or publication permission is implied.
 metadata:
   status: EXPERIMENTAL_CANDIDATE
-  package-version: "0.1.0-f2.1"
+  package-version: "0.1.0-f2.2"
   procedure-id: make-genealogy-inner-authoring-v3
   procedure-sha256: 4fe0de4c08c0d56ac73cd54e71b624a211fe6be433dfd65d04b6fea7358c7771
   standard-version: "0.1.0-draft.2"

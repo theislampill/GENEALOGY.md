@@ -1,7 +1,7 @@
 {
   "name": "make-genealogy",
   "status": "EXPERIMENTAL_CANDIDATE",
-  "package_version": "0.1.0-f2.1",
+  "package_version": "0.1.0-f2.2",
   "procedure": {
     "id": "make-genealogy-inner-authoring-v3",
     "sha256": "4fe0de4c08c0d56ac73cd54e71b624a211fe6be433dfd65d04b6fea7358c7771"
@@ -16,6 +16,10 @@
     "canonical/LICENSE": {
       "bytes": 1069,
       "sha256": "8bc2fed59e2c9fef5dd5bd092195503127ab3941118b34fab857240d5b794f30"
+    },
+    "canonical/README.md": {
+      "bytes": 737,
+      "sha256": "d52f5e391dbd5f7f9471bb9d442eb961468342763ff94e91fe2b1cc2607348b8"
     },
     "canonical/docs/specification.md": {
       "bytes": 19634,
@@ -34,17 +38,22 @@
       "sha256": "4fe0de4c08c0d56ac73cd54e71b624a211fe6be433dfd65d04b6fea7358c7771"
     },
     "requirements.txt": {
-      "bytes": 33,
-      "sha256": "0b0709dc3105d98b29f4fc6a870c15c0cf42191498384ef8a2a32d3fcf5f34ed"
+      "bytes": 48,
+      "sha256": "c568d48f5e25f478a16e42d56f5f8fa6ff3ce7d8a1163b6737bfb00f5d6447bd"
     },
     "scripts/check_package.py": {
-      "bytes": 3497,
-      "sha256": "de7c42907641cbf3f6ac6526d5871e5b1ed096604d7e6f008b694753229d696b"
+      "bytes": 3520,
+      "sha256": "bbd3487b595aab9c31d1d73a3ffaaadbc8180f165bb719b6bd497a4e46883c22"
     },
     "scripts/validate_public.py": {
-      "bytes": 2306,
-      "sha256": "01d42f79aaf8d247150954133836c86adf34e9be892406eb27b9a81f89c40fc3"
+      "bytes": 4851,
+      "sha256": "725eacd8b0bc41b91ee7d29edef9486e9252a2c941d916a48e1c5637dd8b3bd1"
     }
   },
-  "notice": "Canonical MIT notice covers canonical resources. No new licence or normative admission is asserted for the frozen private operator. Digests establish identity relative to the supplied release, not a cryptographic signature."
+  "notice": "Canonical MIT notice covers canonical resources. No new licence or normative admission is asserted for the frozen private operator. Digests establish identity relative to the supplied release, not a cryptographic signature.",
+  "predecessor_package": {
+    "version": "0.1.0-f2.1",
+    "archive_sha256": "fb8ee0a3b59a5c5ee31e235f9480206a02c282622ff8ac2cb8c74bf91d3898a0",
+    "revision_basis": "Independent integration review B1: provision URI format support and fail closed if unavailable; N1: include archive-local canonical navigation. Operator and pinned standard bytes unchanged. Original F2 evidence applies to predecessor bytes."
+  }
 }

@@ -11,9 +11,9 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'skills' / 'make-genealogy'
-EXPECTED = 'fb8ee0a3b59a5c5ee31e235f9480206a02c282622ff8ac2cb8c74bf91d3898a0'
+EXPECTED = 'b6cade520188c2b2505704a14e0227f2818b79e8bf88bc7f9ad68251b2c45078'
 MEMBERS = {
-    'CHECKSUMS.sha256', 'MANIFEST.json', 'SKILL.md', 'canonical/LICENSE',
+    'CHECKSUMS.sha256', 'MANIFEST.json', 'SKILL.md', 'canonical/LICENSE', 'canonical/README.md',
     'canonical/docs/specification.md', 'canonical/schema/genealogy.schema.json',
     'canonical/templates/GENEALOGY.md', 'references/operator.md',
     'requirements.txt', 'scripts/check_package.py', 'scripts/validate_public.py',
@@ -28,8 +28,8 @@ def read_member(name: str) -> bytes:
 
 
 def build() -> bytes:
-    # Only the frozen distribution members are packaged. The adjacent
-    # canonical/README.md is a repository-navigation note, not a runtime input.
+    # Only the explicitly versioned distribution members are packaged.
+    # The navigation note is included without altering the pinned specification.
     declared = {}
     for line in read_member('CHECKSUMS.sha256').decode('utf-8').splitlines():
         digest, name = line.split(maxsplit=1)

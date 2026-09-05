@@ -3,10 +3,52 @@
 from __future__ import annotations
 import json,sys
 from pathlib import Path
-import yaml
-from jsonschema import Draft202012Validator,FormatChecker
+
+class ValidationCapabilityUnavailable(RuntimeError):
+    """The required validation cannot be performed; not a document verdict."""
+
+
+_DEPENDENCY_IMPORT_ERROR = None
+try:
+    import yaml
+    from jsonschema import Draft202012Validator, FormatChecker
+    from jsonschema.exceptions import FormatError, ValidationError
+except ImportError as exc:
+    _DEPENDENCY_IMPORT_ERROR = str(exc)
+
+
+def required_uri_checker() -> FormatChecker:
+    """Check availability AND behaviour; unknown formats otherwise pass silently.
+
+    Use this same instance for the document check. The probes do not retrieve
+    either URI. They detect absent, inert, broken or reject-all registrations.
+    """
+    if _DEPENDENCY_IMPORT_ERROR is not None:
+        raise ValidationCapabilityUnavailable(
+            "Validation dependency unavailable: " + _DEPENDENCY_IMPORT_ERROR +
+            "; install the bundled requirements.txt in an authorised environment.")
+    try:
+        checker = FormatChecker()
+        if 'uri' not in checker.checkers:
+            raise ValidationCapabilityUnavailable(
+                "Required 'uri' format checker is not registered; install "
+                "the bundled jsonschema[format-nongpl] requirements.")
+        for value in ('https://example.org/validation-control', 'urn:example:validation-control'):
+            checker.check(value, 'uri')
+        try:
+            checker.check('not a uri', 'uri')
+        except FormatError:
+            return checker
+        raise ValidationCapabilityUnavailable(
+            "Required 'uri' format checker accepted the invalid capability probe.")
+    except ValidationCapabilityUnavailable:
+        raise
+    except Exception as exc:
+        raise ValidationCapabilityUnavailable(
+            "Required 'uri' format checker failed its capability check: " + str(exc)) from exc
 
 def validate_public(text: str,schema:dict) -> dict:
+    checker = required_uri_checker()
     l=text.splitlines()
     if not l or l[0]!='---':raise ValueError('first line must be ---')
     i=next((i for i in range(1,len(l)-1) if l[i]=='---' and l[i+1]==''),None)
@@ -21,7 +63,7 @@ def validate_public(text: str,schema:dict) -> dict:
     if not(len(sn)==ec and all(isinstance(v,yaml.nodes.ScalarNode) and v.style in (chr(39),chr(34)) and v.start_mark.index>=k.end_mark.index for k,v in sn)):
         raise ValueError('every lineage[].seen value must be explicitly single- or double-quoted')
     Draft202012Validator.check_schema(schema)
-    Draft202012Validator(schema,format_checker=FormatChecker()).validate(d)
+    Draft202012Validator(schema,format_checker=checker).validate(d)
     ids=[e['id'] for e in d.get('self-citation',[]) if 'id' in e]
     if len(ids)!=len(set(ids)):raise ValueError('duplicate self-citation id(s)')
     return d
@@ -30,8 +72,19 @@ def main():
     if len(sys.argv)!=3:
         print('Usage: python validate_public.py PROPOSAL_FILE SCHEMA_FILE',file=sys.stderr);return 2
     try:
-        d=validate_public(Path(sys.argv[1]).read_text(encoding='utf-8'),json.loads(Path(sys.argv[2]).read_text(encoding='utf-8')))
-        print('STRUCTURE=VALID\nHISTORICAL_TRUTH_VERIFIED=NO');return 0
+        text = Path(sys.argv[1]).read_text(encoding='utf-8')
+        schema = json.loads(Path(sys.argv[2]).read_text(encoding='utf-8'))
     except Exception as exc:
-        print('STRUCTURE=INVALID_OR_UNAVAILABLE\nDETAIL='+str(exc));return 1
+        print('STRUCTURE=UNAVAILABLE\nVALIDATION_STATUS=VALIDATION_CAPABILITY_UNAVAILABLE\nDETAIL='+str(exc));return 2
+    try:
+        validate_public(text, schema)
+    except ValidationCapabilityUnavailable as exc:
+        print('STRUCTURE=UNAVAILABLE\nVALIDATION_STATUS=VALIDATION_CAPABILITY_UNAVAILABLE\nDETAIL='+str(exc));return 2
+    except (ValueError, yaml.YAMLError, ValidationError) as exc:
+        print('STRUCTURE=INVALID\nVALIDATION_STATUS=INVALID_DOCUMENT\nDETAIL='+str(exc));return 1
+    except Exception as exc:
+        # Bad schema, missing backend or other execution failure is not a
+        # document-invalid verdict and can never produce a validation pass.
+        print('STRUCTURE=UNAVAILABLE\nVALIDATION_STATUS=VALIDATION_CAPABILITY_UNAVAILABLE\nDETAIL='+str(exc));return 2
+    print('STRUCTURE=VALID\nVALIDATION_STATUS=VALID_DOCUMENT\nHISTORICAL_TRUTH_VERIFIED=NO');return 0
 if __name__=='__main__':raise SystemExit(main())
